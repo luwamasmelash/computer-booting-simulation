@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booting Process Simulation</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: monospace;
+            background: linear-gradient(135deg, #00c6ff, #ff9a9e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 750px;
+            max-width: 95%;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .screen {
+            background: black;
+            color: red;   /* ✅ TEXT CHANGED TO RED */
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: red;   /* ✅ PROGRESS BAR RED */
+            transition: width 0.5s ease;
+        }
+
+        button, select {
+            margin-top: 15px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button {
+            background: red;
+            color: white;
+        }
+
+        button:hover {
+            background: darkred;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>💻 Booting Process Simulation</h2>
+
+    <div class="screen" id="screen"></div>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <div class="controls">
+        <button onclick="startBoot()">Power On</button>
+        <button onclick="restartBoot()">Restart</button>
+
+        <select id="speed">
+            <option value="1500">Slow</option>
+            <option value="800" selected>Normal</option>
+            <option value="300">Fast</option>
+        </select>
+    </div>
+
+</div>
+
+<script>
+
+const steps = [
+    "Power Button Pressed...",
+    "BIOS Starting...",
+    "Performing POST...",
+    "Checking Storage Devices...",
+    "Loading Bootloader...",
+    "Loading Kernel...",
+    "Initializing Drivers...",
+    "Starting System Services...",
+    "Operating System Loaded Successfully!"
+];
+
+let index = 0;
+let timer;
+
+function startBoot() {
+    restartBoot();
+    nextStep();
+}
+
+function nextStep() {
+    if (index < steps.length) {
+
+        let screen = document.getElementById("screen");
+        screen.innerHTML += steps[index] + "<br>";
+
+        let progressPercent = ((index + 1) / steps.length) * 100;
+        document.getElementById("progress").style.width = progressPercent + "%";
+
+        screen.scrollTop = screen.scrollHeight;
+
+        index++;
+
+        let speed = document.getElementById("speed").value;
+        timer = setTimeout(nextStep, speed);
+
+    } else {
+        document.getElementById("screen").innerHTML += 
+            "<span class='blink'>System Ready ✔</span>";
+    }
+}
+
+function restartBoot() {
+    clearTimeout(timer);
+    index = 0;
+    document.getElementById("screen").innerHTML = "";
+    document.getElementById("progress").style.width = "0%";
+}
+
+</script>
+
+</body>
+</html>
